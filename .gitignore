@@ -1,0 +1,48 @@
+# Keil MDK
+
+*.uvoptx
+*.uvguix.*
+*.bak
+*.dep
+*.crf
+*.o
+*.d
+*.axf
+*.map
+*.lst
+*.lnp
+*.plg
+*.sct
+*.tra
+*.htm
+
+# Build output
+
+OBJ/
+Listings/
+
+# Debug / Trace
+
+JLinkLog.txt
+*.scvd
+
+# Temporary files
+
+*.tmp
+*.temp
+*.log
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# VSCode
+
+.vscode/
+
+# Keil generated folders
+
+DebugConfig/
+RTE/
+
