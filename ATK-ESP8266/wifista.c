@@ -13,6 +13,8 @@
 //All rights reserved									  
 /////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
+#define DEFAULT_SERVER_IP   "47.76.86.184" //服务器公网IP
+
 //ATK-ESP8266 WIFI STA测试
 //用于测试TCP/UDP连接
 //返回值:0,正常
@@ -63,7 +65,13 @@ PRESTA:
 			POINT_COLOR=RED;
 			Show_Str_Mid(0,30,"ATK-ESP WIFI-STA 测试",16,240); 
 			Show_Str(30,50,200,16,"正在配置ATK-ESP模块,请稍等...",12,0);
-			if(atk_8266_ip_set("WIFI-STA 远端IP设置",(u8*)ATK_ESP8266_WORKMODE_TBL[netpro],(u8*)portnum,ipbuf))goto PRESTA;	//IP输入
+			
+			#if defined(DEFAULT_SERVER_IP)
+					strcpy((char*)ipbuf, DEFAULT_SERVER_IP);
+			#else			
+						if(atk_8266_ip_set("WIFI-STA 远端IP设置",(u8*)ATK_ESP8266_WORKMODE_TBL[netpro],(u8*)portnum,ipbuf))goto PRESTA;	//IP输入
+			#endif			
+						
 			atk_8266_send_cmd("AT+CIPMUX=0","OK",20);   //0：单连接，1：多连接
 			sprintf((char*)p,"AT+CIPSTART=\"TCP\",\"%s\",%s",ipbuf,(u8*)portnum);    //配置目标TCP服务器
 			while(atk_8266_send_cmd(p,"OK",200))
