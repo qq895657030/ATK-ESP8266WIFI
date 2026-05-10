@@ -22,6 +22,11 @@
 u8 netpro=0;	//网络模式
 u8 atk_8266_wifista_test(void)
 {
+	
+	static int roll = 0;
+	static int pitch = 0;
+	static int yaw = 0;
+
 	//u8 netpro=0;	//网络模式
 	u8 key;
 	u8 timex=0; 
@@ -138,13 +143,22 @@ PRESTA:
 								sprintf((char*)p,
 												"AT+CIPSTART=\"TCP\",\"47.76.86.184\",3000");
 
+								roll += 5;
+								pitch += 3;
+								yaw += 2;
+								if(roll > 500) roll = -500;
+								if(pitch > 500) pitch = -500;
+								if(yaw > 500) yaw = -500;
+								
 								if(atk_8266_send_cmd(p,"OK",300)==0)
 								{
-										sprintf((char*)p,
-														"GET /upload?msg=ESP8266_AUTO_%d HTTP/1.1\r\n"
-														"Host: 47.76.86.184:3000\r\n"
-														"Connection: close\r\n\r\n",
-														t);
+									sprintf((char*)p,
+													"GET /upload?msg=ROLL:%d,PITCH:%d,YAW:%d HTTP/1.1\r\n"
+													"Host: 47.76.86.184:3000\r\n"
+													"Connection: close\r\n\r\n",
+													roll,
+													pitch,
+													yaw);
 
 										sprintf((char*)USART2_RX_BUF,
 														"AT+CIPSEND=%d",
