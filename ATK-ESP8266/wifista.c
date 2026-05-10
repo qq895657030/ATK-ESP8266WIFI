@@ -136,13 +136,13 @@ PRESTA:
 								atk_8266_send_cmd("AT+CIPCLOSE","OK",50);
 
 								sprintf((char*)p,
-												"AT+CIPSTART=\"TCP\",\"47.76.86.184\",80");
+												"AT+CIPSTART=\"TCP\",\"47.76.86.184\",3000");
 
 								if(atk_8266_send_cmd(p,"OK",300)==0)
 								{
 										sprintf((char*)p,
 														"GET /upload?msg=ESP8266_AUTO_%d HTTP/1.1\r\n"
-														"Host: 47.76.86.184\r\n"
+														"Host: 47.76.86.184:3000\r\n"
 														"Connection: close\r\n\r\n",
 														t);
 

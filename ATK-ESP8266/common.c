@@ -16,7 +16,7 @@
 //用户配置区
 
 //连接端口号:8086,可自行修改为其他端口.
-const u8* portnum="80";		 
+const u8* portnum="3000";		 
 
 //WIFI STA模式,设置要去连接的路由器无线参数,请根据你自己的路由器设置,自行修改.
 const u8* wifista_ssid="bedroom";			//路由器SSID号
