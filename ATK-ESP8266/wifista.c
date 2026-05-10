@@ -124,37 +124,54 @@ PRESTA:
 					atk_8266_send_cmd("AT+CIPMODE=0","OK",20);   //关闭透传模式
 					break;												 
 				}
-				else if(key==KEY0_PRES)	//KEY0 发送数据 
+				// 每5秒发送一次
+				if((t % 500) == 0)
 				{
-				
-					if((netpro==3)||(netpro==2))   //UDP
-					{
-						sprintf((char*)p,"ATK-8266%s测试%02d\r\n",ATK_ESP8266_WORKMODE_TBL[netpro],t/10);//测试数据
-						Show_Str(30+54,100,200,12,p,12,0);
-						atk_8266_send_cmd("AT+CIPSEND=25","OK",200);  //发送指定长度的数据
-						delay_ms(200);
-						atk_8266_send_data(p,"OK",100);  //发送指定长度的数据
-						timex=100;
-					}
-					else if((netpro==1))   //TCP Client
-					{
-						atk_8266_quit_trans();
-						atk_8266_send_cmd("AT+CIPSEND","OK",20);         //开始透传           
-						sprintf((char*)p,"ATK-8266%s测试%d\r\n",ATK_ESP8266_WORKMODE_TBL[netpro],t/10);//测试数据
-						Show_Str(30+54,100,200,12,p,12,0);
-						u2_printf("%s",p);
-						timex=100;
-					}
-					else    //TCP Server
-					{
-						sprintf((char*)p,"ATK-8266%s测试%02d\r\n",ATK_ESP8266_WORKMODE_TBL[netpro],t/10);//测试数据
-						Show_Str(30+54,100,200,12,p,12,0);
-						atk_8266_send_cmd("AT+CIPSEND=0,25","OK",200);  //发送指定长度的数据
-						delay_ms(200);
-						atk_8266_send_data(p,"OK",100);  //发送指定长度的数据
-						timex=100;
-					}
-				}else;
+						if(netpro==1)   // TCP Client
+						{
+								atk_8266_quit_trans();
+
+								atk_8266_send_cmd("AT+CIPMODE=0","OK",50);
+
+								atk_8266_send_cmd("AT+CIPCLOSE","OK",50);
+
+								sprintf((char*)p,
+												"AT+CIPSTART=\"TCP\",\"47.76.86.184\",80");
+
+								if(atk_8266_send_cmd(p,"OK",300)==0)
+								{
+										sprintf((char*)p,
+														"GET /upload?msg=ESP8266_AUTO_%d HTTP/1.1\r\n"
+														"Host: 47.76.86.184\r\n"
+														"Connection: close\r\n\r\n",
+														t);
+
+										sprintf((char*)USART2_RX_BUF,
+														"AT+CIPSEND=%d",
+														strlen((char*)p));
+
+										if(atk_8266_send_cmd(USART2_RX_BUF,">",100)==0)
+										{
+												u2_printf("%s",p);
+
+												LCD_Fill(30+54,100,239,112,WHITE);
+												Show_Str(30+54,100,200,12,"AUTO SEND",12,0);
+										}
+										else
+										{
+												Show_Str(30+54,100,200,12,"SEND FAIL",12,0);
+										}
+								}
+								else
+								{
+										Show_Str(30+54,100,200,12,"CONNECT FAIL",12,0);
+								}
+						}
+				}
+
+				t++;
+
+				delay_ms(10);
 			
 				if(timex)timex--;
 				if(timex==1)LCD_Fill(30+54,100,239,112,WHITE);
